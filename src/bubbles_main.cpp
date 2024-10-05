@@ -33,9 +33,14 @@ int main(int argc, char * argv[]){
 	
 		// Set up the text object that will be drawn to the screen
 		sf::Text text("Watch these bubbles move!", myFont, 45);
+		text.setFillColor(Color::Black);
 
-		// Align text on the bottom on the screen
-		text.setPosition(10, wHeight - (float)text.getCharacterSize() - 10);
+		// Align text to the middle of the screen
+		sf::FloatRect textRect = text.getLocalBounds();
+		text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+		text.setPosition(wWidth / 2.0f, wHeight / 2.0f);
+
+		//text.setPosition(10, wHeight - (float)text.getCharacterSize() - 10);
 
 		// Variables for movement speed, direction, and utility counter for loops
 		float array[] = {2.0, 3.0, 4.0};
@@ -43,23 +48,34 @@ int main(int argc, char * argv[]){
 		float x_direction[] = {1.0, 1.0, 1.0};
 		float y_direction[] = {1.0, 1.0, 1.0};
 		int counter = 1;
-	
-		// Create a vector of circles	
+		
+		// Create a vector of circle shapes
 		std::vector<sf::CircleShape> circles;
-		for (int i = 0; i <= 2; i++){
-			circles.push_back(sf::CircleShape(25.f*(counter*2)));
-			circles.back().setPosition(30.0f*counter, 50.0f*counter);
-			circles.back().setFillColor(sf::Color(100*(counter*20), 50, 200));
+		for (int i = 0; i <= 2; i++ ){
+			sf::CircleShape tempCircle(25.0f * (counter * 2));
+			sf::FloatRect circleRect = tempCircle.getLocalBounds();
+			
+			tempCircle.setOrigin(circleRect.left + circleRect.width / 2.0f, circleRect.top + circleRect.height / 2.0f);
+			tempCircle.setPosition(30.0f * counter, 50.0f * counter);
+			tempCircle.setFillColor(sf::Color(100 * (counter * 20), 50, 200));
+			circles.push_back(tempCircle);
+
+			counter++;
+		}
+		
+		// Create a vector of text shapes
+		std::vector<sf::Text> textCircles;
+		counter = 1;
+		for (int i = 0; i <= circles.size(); i++) {
+			sf::Text textInCircle("Wee!", myFont, 30 * counter);
+			FloatRect textRect = textInCircle.getLocalBounds();
+
+			textInCircle.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+			textCircles.push_back(textInCircle);
+
 			counter++;
 		}
 
-		// Create a vector of text shapes
-		std::vector<sf::Text> texts;
-		counter = 1;
-		for (int i = 0; i <= circles.size(); i++){
-			texts.push_back(sf::Text("Wee!", myFont, 30 * counter));
-			counter++;
-		}
 	//End configuration for window, circles, and text
 
 
@@ -96,10 +112,10 @@ int main(int argc, char * argv[]){
 
 		// Basic animation function calls
 			// Change the circle's direction before it goes out of the window range 
-			for(int i = 0; i <= circles.size(); i++){
-				if (circles[i].getPosition().x > 1000)
+			for(int i = 0; i <= 2; i++){
+				if (circles[i].getPosition().x > wWidth)
 					x_direction[i] = -1.0;
-				if (circles[i].getPosition().y > 500)
+				if (circles[i].getPosition().y > wHeight)
 					y_direction[i] = -1.0;
 				if (circles[i].getPosition().x < 5)
 					x_direction[i] = 1.0;
@@ -108,11 +124,10 @@ int main(int argc, char * argv[]){
 			} // End for loop checking circles position on screen
 		
 			// Set circle and text shape's new position for the next iteration of while loop 
-			counter = 1;
 			for (int i = 0; i <= circles.size(); i++){
 				circles[i].setPosition(circles[i].getPosition().x + (array[i] * x_direction[i]), circles[i].getPosition().y + (array2[i] * y_direction[i]));
-			texts[i].setPosition((circles[i].getPosition().x + 12*counter) + (array[i] * x_direction[i]), (circles[i].getPosition().y + 32*counter) + (array2[i] * y_direction[i]));
-				counter++;
+				
+				textCircles[i].setPosition(circles[i].getPosition().x, circles[i].getPosition().y);
 			} // End for loop setting circle and text shape's new position
 		// End basic animation function calls
 
@@ -124,7 +139,7 @@ int main(int argc, char * argv[]){
 			// Draw circles and text shapes
 			for (int i = 0; i <= 2; i++){
 				window.draw(circles[i]);
-				window.draw(texts[i]);
+				window.draw(textCircles[i]);
 			}
 		
 			// Draw text at the bottom of the window
