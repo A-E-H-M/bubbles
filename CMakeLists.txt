@@ -7,7 +7,7 @@ cmake_minimum_required ( VERSION 3.14 FATAL_ERROR )
 
 project ( bubbles
 		  LANGUAGES CXX
-		  DESCRIPTION "A sample animation usingg SFML" )
+		  DESCRIPTION "A sample animation using SFML" )
 
 # Add library targets
 add_executable( bubbles src/bubbles_main.cpp )
